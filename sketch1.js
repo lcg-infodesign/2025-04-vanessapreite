@@ -49,7 +49,7 @@ function displayVulcanoDetails(row) {
     .parent(container)
     .style("color", "#ff3333");
 
-  // Mostra tutti i campi del dataset
+  // Mostra tutti i campi
   let columns = data.columns;
   for (let col of columns) {
     if (col === "Volcano Name") continue;
@@ -62,7 +62,7 @@ function displayVulcanoDetails(row) {
     p.style("color", "#fff");
     p.style("font-weight", "normal");
 
-    // Hover luminoso via JS
+    // Hover luminoso
     p.mouseOver(() => {
       p.style("color", "#ffffaa");
       p.style("text-shadow", "0 0 8px #ffffaa");
@@ -74,6 +74,20 @@ function displayVulcanoDetails(row) {
       p.style("transform", "translateX(0px)");
     });
   }
+
+  // Pulsante Indietro
+  let btn = createButton("← Torna Indietro").parent(container);
+  btn.style("margin-top", "20px");
+  btn.style("padding", "10px 20px");
+  btn.style("font-size", "16px");
+  btn.style("border-radius", "6px");
+  btn.style("border", "none");
+  btn.style("cursor", "pointer");
+  btn.style("background-color", "#ff3333");
+  btn.style("color", "#fff");
+  btn.mouseOver(() => btn.style("background-color", "#ff5555"));
+  btn.mouseOut(() => btn.style("background-color", "#ff3333"));
+  btn.mousePressed(() => window.history.back());
 
   // Centra container
   container.style("margin", "auto");
