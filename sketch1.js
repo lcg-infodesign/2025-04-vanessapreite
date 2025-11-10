@@ -1,7 +1,6 @@
 let data;
 let vulcanoName;
 let vulcanoRow;
-let minEl, maxEl;
 
 function preload() {
   // Carica il dataset CSV
@@ -15,8 +14,11 @@ function preload() {
 function setup() {
   noCanvas(); // Non serve canvas, solo HTML
 
+  // Sfondo nero
+  select('body').style('background-color', '#000');
+
   if (!vulcanoName) {
-    createP("Nessun vulcano selezionato.");
+    createP("Nessun vulcano selezionato.").style("color", "#fff");
     return;
   }
 
@@ -30,14 +32,9 @@ function setup() {
   }
 
   if (!vulcanoRow) {
-    createP("Vulcano non trovato nel dataset.");
+    createP("Vulcano non trovato nel dataset.").style("color", "#fff");
     return;
   }
-
-  // Calcolo min/max elevazione per il colore dinamico
-  let elevations = data.getColumn("Elevation (m)").map(v => parseFloat(v)).filter(v => !isNaN(v));
-  minEl = min(elevations);
-  maxEl = max(elevations);
 
   displayVulcanoDetails(vulcanoRow);
 }
@@ -45,23 +42,39 @@ function setup() {
 function displayVulcanoDetails(row) {
   // Container principale
   let container = createDiv().addClass("vulcano-container dynamic-color");
+  container.style("background-color", "rgba(40, 40, 40, 0.6)");
 
-  // Calcola colore basato sull'elevazione
-  let el = parseFloat(row.getString("Elevation (m)")) || 0;
-  let h = map(el, minEl, maxEl, 200, 0); // come homepage
-  let c = color(h, 90, 100);
-  container.style("background-color", c.toString());
+  // Titolo
+  createElement("h1", row.getString("Volcano Name"))
+    .parent(container)
+    .style("color", "#ff3333");
 
-  // Nome vulcano come titolo
-  createElement("h1", row.getString("Volcano Name")).parent(container);
-
-  // Mostra tutti i campi del dataset come legenda
+  // Mostra tutti i campi del dataset
   let columns = data.columns;
   for (let col of columns) {
-    if (col === "Volcano Name") continue; // nome già mostrato
+    if (col === "Volcano Name") continue;
     let value = row.getString(col) || "N/A";
-    let p = createP("");
-    p.parent(container);
-    p.html(`<span class="field-label">${col}:</span> ${value}`);
+
+    let p = createP("").parent(container);
+    p.html(`<span class="field-label">${col}:</span> <span class="field-value">${value}</span>`);
+
+    // Testo bianco e normale
+    p.style("color", "#fff");
+    p.style("font-weight", "normal");
+
+    // Hover luminoso via JS
+    p.mouseOver(() => {
+      p.style("color", "#ffffaa");
+      p.style("text-shadow", "0 0 8px #ffffaa");
+      p.style("transform", "translateX(3px)");
+    });
+    p.mouseOut(() => {
+      p.style("color", "#fff");
+      p.style("text-shadow", "none");
+      p.style("transform", "translateX(0px)");
+    });
   }
+
+  // Centra container
+  container.style("margin", "auto");
 }
